@@ -99,18 +99,21 @@ body.theme-3 { --bg-gradient: linear-gradient(270deg, #a1c4fd, #c2e9fb, #667db6,
 }
 
 @media (max-width: 600px) {
-    .clock-container h1 {
-        font-size: 2.6rem; /* smaller, will fit */
-        text-shadow: 0 0 10px #ff6ec4, 0 0 20px #ff6ec4, 0 0 30px #ff6ec4; /* reduce shadow to avoid extra size */
-    }
-    .subtitle {
-        font-size: 1rem;
-    }
-    .date {
-        font-size: 0.85rem;
-    }
-    .controls button {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-    }
+  .clock-container h1 {
+    font-size: 3.2rem; /* was 2.6rem — now bigger but safe */
+    text-shadow: 0 0 12px #ff6ec4, 0 0 24px #ff6ec4, 0 0 36px #ff6ec4;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .date {
+    font-size: 0.9rem;
+  }
+
+  .controls button {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
 }
