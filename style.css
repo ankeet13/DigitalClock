@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Pacifico&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd, #c2e9fb);
+    background-size: 1200% 1200%;
+    animation: gradientShift 15s ease infinite;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.clock-container h1 {
+    font-size: 8rem;
+    color: #fff;
+    text-shadow: 0 0 30px #ff6ec4, 0 0 60px #ff6ec4, 0 0 90px #ff6ec4;
+    animation: pulse 2s infinite alternate, bounce 1s infinite;
+    transition: all 0.3s ease-in-out;
+}
+
+.subtitle {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    color: #ffffffcc;
+    font-family: 'Pacifico', cursive;
+    text-shadow: 0 0 10px #ffffffaa;
+    animation: fadeIn 3s ease-in;
+}
+
+@keyframes gradientShift {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+@keyframes pulse {
+    from {
+        text-shadow: 0 0 10px #ff6ec4, 0 0 20px #ff6ec4, 0 0 30px #ff6ec4;
+    }
+    to {
+        text-shadow: 0 0 30px #ff6ec4, 0 0 60px #ff6ec4, 0 0 90px #ff6ec4;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
