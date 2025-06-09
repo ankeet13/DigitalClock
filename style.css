@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Pacifico&display=swap');
 
+:root {
+    --bg-gradient: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd, #c2e9fb);
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -8,11 +12,15 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd, #c2e9fb);
+    background: var(--bg-gradient);
     background-size: 1200% 1200%;
     animation: gradientShift 15s ease infinite;
     font-family: 'Orbitron', sans-serif;
 }
+
+body.theme-1 { --bg-gradient: linear-gradient(270deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd, #c2e9fb); }
+body.theme-2 { --bg-gradient: linear-gradient(270deg, #cfd9df, #e2ebf0, #d4fc79, #96e6a1); }
+body.theme-3 { --bg-gradient: linear-gradient(270deg, #a1c4fd, #c2e9fb, #667db6, #0082c8, #00b3e6, #2bf7b7); }
 
 .clock-container h1 {
     font-size: 8rem;
@@ -29,6 +37,35 @@ body {
     font-family: 'Pacifico', cursive;
     text-shadow: 0 0 10px #ffffffaa;
     animation: fadeIn 3s ease-in;
+}
+
+.date {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #ffffffcc;
+    text-shadow: 0 0 10px #ffffffaa;
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.controls button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background: #ffffff33;
+    color: #fff;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    backdrop-filter: blur(5px);
+    transition: background 0.3s;
+}
+
+.controls button:hover {
+    background: #ffffff55;
 }
 
 @keyframes gradientShift {
@@ -58,4 +95,20 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@media (max-width: 600px) {
+    .clock-container h1 {
+        font-size: 4rem;
+    }
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    .date {
+        font-size: 0.9rem;
+    }
+    .controls button {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
 }
