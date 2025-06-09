@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -9,7 +8,12 @@
 <body>
     <div class="clock-container">
         <h1 id="clock">00:00:00</h1>
+        <p id="date" class="date"></p>
         <p class="subtitle">you are timeless ✨</p>
+        <div class="controls">
+            <button id="format-toggle" aria-label="Toggle 12/24 hour format">24H</button>
+            <button id="theme-toggle" aria-label="Change theme">🎨</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
