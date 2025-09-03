@@ -1,23 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>✨ Digital Clock - Time is an Illusion ✨</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>World Clock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0c0f;
+      --card:#0f1116cc;
+      --text:#f2f5f8;
+      --muted:#9aa4b2;
+      --accent:#00ffc6;
+      --ring:#00ffc633;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 600px at 80% -10%, #1a1f2a 0%, transparent 60%),
+        radial-gradient(900px 500px at 10% 110%, #11161f 0%, transparent 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.08;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+      mix-blend-mode:overlay;
+    }
+
+    .wrap{ width:min(900px, 92vw); display:grid; gap:22px; }
+
+    .header{
+      font-weight:700;
+      font-size:1.1rem;
+      color:var(--muted);
+      text-align:center;
+      letter-spacing:.05em;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid #1b2230;
+      border-radius:22px;
+      padding:28px clamp(18px, 4vw, 36px);
+      backdrop-filter: blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,.35),
+                 inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+
+    .clock{ display:grid; gap:12px; justify-items:center; text-align:center; }
+
+    .time{
+      font-family:Orbitron,Inter,sans-serif;
+      font-size: clamp(48px, 10vw, 140px);
+      font-weight:800;
+      text-shadow: 0 0 40px var(--ring);
+    }
+    .date{ font-size: clamp(14px, 2.8vw, 20px); color:var(--muted); }
+
+    .tz-row{ margin-top:8px; color:#cbd5e1; font-size:.95rem; }
+
+    .controls{
+      display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px
+    }
+    .btn{
+      appearance:none;border:1px solid #232a39;background:#0c0f15;color:var(--text);
+      padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:600;
+      transition:.18s all ease;
+    }
+    .btn:hover{transform:translateY(-1px);border-color:#2f374a;box-shadow:0 0 0 6px var(--ring)}
+
+    .search{ display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px }
+    .input{
+      width:min(420px, 90vw);
+      background:#0b0f16;border:1px solid #1f2634;border-radius:12px;color:var(--text);
+      padding:12px 14px;font-size:.98rem;outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    .input:focus{border-color:#2c3446;box-shadow:0 0 0 6px var(--ring)}
+
+    .hint{ color:#6b7280;font-size:.8rem;text-align:center;margin-top:6px }
+
+    /* --- Mobile refinements --- */
+    @media (max-width: 420px){
+      .time{ font-size: clamp(48px, 18vw, 120px); }
+      .btn{ padding:12px 14px; border-radius:14px; flex:1 1 auto; }
+      .input{ width:100%; }
+      .card{ padding:22px 16px; border-radius:18px; }
+    }
+  </style>
 </head>
 <body>
-    <div class="clock-container">
-        <h1 id="clock">00:00:00</h1>
-        <p id="timezone" class="timezone"></p>
-        <p id="date" class="date"></p>
-        <p class="subtitle">you are timeless ✨</p>
-        <div class="controls">
-            <button id="format-toggle" aria-label="Toggle 12/24 hour format">24H</button>
-            <button id="theme-toggle" aria-label="Change theme">🎨</button>
-        </div>
-    </div>
+  <main class="wrap">
+    <div class="header">World Clock</div>
 
-    <script src="js/clock.js"></script>
+    <section class="card clock" aria-live="polite">
+      <div id="time" class="time">00:00:00</div>
+      <div id="date" class="date">—</div>
+
+      <div class="tz-row" id="place">Detecting location…</div>
+
+      <div class="controls">
+        <button class="btn" id="toggle-format">24H</button>
+      </div>
+
+      <div class="search">
+        <input class="input" id="zone-input" list="zones" placeholder="Search timezone e.g. Australia/Sydney or New_York — (clear & Set Zone to use system)" autocomplete="off"/>
+        <datalist id="zones"></datalist>
+        <button class="btn" id="apply-zone">Set Zone</button>
+      </div>
+      <div class="hint">Tip: clear the field and click “Set Zone” to use your system timezone.</div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (sel)=>document.querySelector(sel);
+
+    const COMMON_ZONES = {
+      "Australia/Sydney":"Sydney",
+      "Australia/Melbourne":"Melbourne",
+      "Australia/Brisbane":"Brisbane",
+      "Australia/Perth":"Perth",
+      "Pacific/Auckland":"Auckland",
+      "Asia/Tokyo":"Tokyo",
+      "Asia/Singapore":"Singapore",
+      "Asia/Kolkata":"Mumbai/Delhi (IST)",
+      "Asia/Dubai":"Dubai",
+      "Europe/London":"London",
+      "Europe/Paris":"Paris",
+      "Europe/Berlin":"Berlin",
+      "America/New_York":"New York",
+      "America/Los_Angeles":"Los Angeles",
+      "America/Chicago":"Chicago",
+      "UTC":"UTC"
+    };
+    const zonesEl = $("#zones");
+    for (const [tz, label] of Object.entries(COMMON_ZONES)){
+      const opt = document.createElement("option");
+      opt.value = tz; opt.label = label;
+      zonesEl.appendChild(opt);
+    }
+
+    let state = {
+      is24: JSON.parse(localStorage.getItem("proclock:is24") ?? "true"),
+      mode: localStorage.getItem("proclock:mode") || "system",
+      zone: localStorage.getItem("proclock:zone") || Intl.DateTimeFormat().resolvedOptions().timeZone
+    };
+
+    $("#toggle-format").textContent = state.is24 ? "24H" : "12H";
+    $("#zone-input").value = state.mode === "fixed" ? state.zone : "";
+
+    function zoneLabel(zone){
+      if (COMMON_ZONES[zone]) return `${COMMON_ZONES[zone]} · ${zone}`;
+      if (zone.includes("/")) return `${zone.split("/")[1].replace("_"," ")} · ${zone}`;
+      return zone;
+    }
+
+    function formatNow(zone){
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat(undefined, {
+        timeZone: zone,
+        hour12: !state.is24,
+        hour: "2-digit", minute:"2-digit", second:"2-digit"
+      }).format(now);
+      const dateStr = new Intl.DateTimeFormat(undefined, {
+        timeZone: zone,
+        weekday:"long", year:"numeric", month:"long", day:"numeric"
+      }).format(now);
+      return { time: parts.replaceAll(" ", ""), date: dateStr };
+    }
+
+    function tick(){
+      const zone = state.mode === "system"
+        ? Intl.DateTimeFormat().resolvedOptions().timeZone
+        : state.zone;
+      const { time, date } = formatNow(zone);
+      $("#time").textContent = time;
+      $("#date").textContent = date;
+      $("#place").textContent = zoneLabel(zone);
+    }
+
+    function loop(){ tick(); setTimeout(loop, 1000 - (Date.now() % 1000)); }
+    loop();
+
+    $("#toggle-format").addEventListener("click", ()=>{
+      state.is24 = !state.is24;
+      localStorage.setItem("proclock:is24", JSON.stringify(state.is24));
+      $("#toggle-format").textContent = state.is24 ? "24H" : "12H";
+      tick();
+    });
+
+    $("#apply-zone").addEventListener("click", ()=>{
+      const val = $("#zone-input").value.trim();
+      if (!val){
+        state.mode = "system";
+        localStorage.setItem("proclock:mode","system");
+        tick();
+        return;
+      }
+      try{
+        new Intl.DateTimeFormat(undefined, { timeZone: val }).format(new Date());
+        state.zone = val;
+        state.mode = "fixed";
+        localStorage.setItem("proclock:zone", state.zone);
+        localStorage.setItem("proclock:mode", "fixed");
+        tick();
+      }catch(e){
+        alert("Invalid timezone. Try e.g. 'Australia/Sydney'.");
+      }
+    });
+
+    $("#zone-input").addEventListener("keydown", (e)=>{
+      if (e.key === "Enter") $("#apply-zone").click();
+      if (e.key === "Escape"){ e.target.value = ""; }
+    });
+  </script>
 </body>
 </html>
